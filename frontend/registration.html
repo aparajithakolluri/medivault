@@ -10,7 +10,7 @@
 
     body {
       font-family: 'Poppins', sans-serif;
-      background: url('regestration.jpg') no-repeat center center fixed;
+      background: url('registration.jpg') no-repeat center center fixed; /* Fixed typo */
       background-size: cover;
       padding: 20px;
       color: #333;
@@ -161,8 +161,47 @@
     </div>
   </div>
 
-<script src="js/register.js"></script>
+<!-- QRCode.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+document.getElementById('regForm').addEventListener('submit', function(e) {
+  e.preventDefault();
 
+  // Collect form data
+  const userData = {
+    firstName: document.getElementById('firstName').value,
+    middleName: document.getElementById('middleName').value,
+    lastName: document.getElementById('lastName').value,
+    email: document.getElementById('email').value,
+    phone: document.getElementById('phone').value,
+    dob: document.getElementById('dob').value,
+    aadhaar: document.getElementById('aadhaar').value,
+    pan: document.getElementById('pan').value,
+    address: document.getElementById('address').value,
+    blood: document.getElementById('blood').value,
+    conditions: document.getElementById('conditions').value,
+    medications: document.getElementById('medications').value,
+    emergencyName: document.getElementById('emergencyName').value,
+    emergencyPhone: document.getElementById('emergencyPhone').value
+    // Do not include password in QR for security
+  };
 
+  // Show medical profile
+  document.getElementById('profileData').textContent = JSON.stringify(userData, null, 2);
+  document.getElementById('profile').style.display = 'block';
+  document.getElementById('showProfileBtn').style.display = 'block';
+
+  // Generate QR code with user data (as JSON string)
+  document.getElementById('qr').innerHTML = ""; // Clear previous QR
+  new QRCode(document.getElementById('qr'), {
+    text: JSON.stringify(userData),
+    width: 180,
+    height: 180
+  });
+});
+document.getElementById('showProfileBtn').onclick = function() {
+  document.getElementById('profile').style.display = 'block';
+};
+</script>
 </body>
 </html>
