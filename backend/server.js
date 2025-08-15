@@ -15,18 +15,31 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-connectDB();
+// Connect to the database and log errors
+connectDB().catch((err) => {
+    console.error('❌ Failed to connect to database:', err);
+    process.exit(1);
+});
 
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/medical', medicalRoutes);
 
-const __dirnameDir = path.resolve();
-app.use(express.static(path.join(__dirnameDir, '/frontend')));
+// Frontend static assets
+const frontendPath = path.join(__dirname, '..', 'frontend');
+app.use(express.static(frontendPath));
 
+// SPA fallback (client-side routing)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirnameDir, '/frontend/index.html'));
+    res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
+// Error handler middleware
+app.use((err, req, res, next) => {
+    console.error('❌ Internal Server Error:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`✅ Server running on port ${PORT}`));
